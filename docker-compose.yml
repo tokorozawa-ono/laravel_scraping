@@ -1,0 +1,48 @@
+version: '3'
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    volumes:
+      - "./web/default.conf:/etc/nginx/conf.d/default.conf"
+      - "./app:/var/www/"
+    environment:
+      TZ: Asia/Tokyo
+  app:
+    build: ./php
+    depends_on:
+      - mysql
+    volumes:
+      - "./app:/var/www/"
+      - "./php/php.ini:/usr/local/etc/php/php.ini"
+    environment:
+      TZ: Asia/Tokyo
+  mysql:
+    build: ./mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      TZ: Asia/Tokyo
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./mysql/mysql-data:/var/lib/mysql"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=${MYSQL_USER}
+      - PMA_PASSWORD=${MYSQL_PASSWORD}
+    links:
+      - mysql
+    ports:
+      - 9000:80
+    volumes:
+      - "./mysql/phpmyadmin/sessions:/sessions"
+      - "./php/php.ini:/usr/local/etc/php/conf.d/phpmyadmin-misc.ini"

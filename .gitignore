@@ -1,0 +1,13 @@
+#IDE
+.idea
+.env
+
+#docker
+docker-compose.yml
+docker-compose-prod.yml
+/app/endpoint_cron.sh
+/mysql
+/php
+/web
+/workspace
+/app/app/Model/SnsConst.php
